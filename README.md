@@ -21,7 +21,7 @@ Every stage is downloadable as a PNG for printing. A programmatically drawn samp
 
 ## Tutorial sheet
 
-A dedicated section redraws **all five stages as black outlines on plain white** — shapes as outlines, the grid map in black on white, the outline, the shadow-region boundaries, and the final line drawing — stacked into one tall, titled, printable sheet with a single download button, like a page from a drawing-tutorial book.
+A dedicated section redraws **all five stages as black outlines on plain white** — shapes as outlines, the grid map in black on white, the outline, the shadow-region boundaries (over a faint silhouette, so shapes survive where a tone matches the background), and the final line drawing — stacked into one tall, titled, printable sheet with a single download button, like a page from a drawing-tutorial book.
 
 ## Honest note (also stated on the page)
 
