@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PicToDraw — turn any photo into a step-by-step drawing guide</title>
-<meta name="description" content="Upload or snap any picture — a person, a pet, anything — and get a beginner-friendly drawing guide: big shapes, a labelled grid, a traceable outline and a light-and-shadow map. Runs entirely in your browser.">
-<meta property="og:title" content="PicToDraw — turn any photo into a drawing lesson">
-<meta property="og:description" content="Photo in, drawing guide out: big shapes, grid method, traceable outline, value map. For beginners and artists.">
+<title>PicToDraw — turn any photo into a simple step-by-step drawing tutorial</title>
+<meta name="description" content="Upload or snap any picture and get a simple 3-step drawing tutorial in black outline on white: basic shapes, outline sketch, final drawing. Runs entirely in your browser.">
+<meta property="og:title" content="PicToDraw — turn any photo into a drawing tutorial">
+<meta property="og:description" content="Photo in, simple drawing tutorial out: basic shapes → outline → final drawing. Black on white, ready to print.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="banner.png">
 <meta name="twitter:card" content="summary_large_image">
 <style>
-  :root { --bg:#171310; --card:#241d18; --line:#453629; --text:#faf5ec; --muted:#c9b8a3; --accent:#f0a832; --accent2:#7fb069; }
+  :root { --bg:#171310; --card:#241d18; --line:#453629; --text:#faf5ec; --muted:#c9b8a3; --accent:#f0a832; }
   * { box-sizing: border-box; }
   body { margin:0; font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background:var(--bg); color:var(--text); }
   .wrap { max-width: 720px; margin: 0 auto; padding: 26px 16px 56px; }
@@ -25,11 +25,7 @@
   .row { display:flex; gap:10px; flex-wrap: wrap; margin-top: 12px; }
   button.act { background: var(--accent); color:#241a05; border:0; border-radius: 10px; padding: 12px 17px; font-size: 15px; font-weight: 700; cursor:pointer; }
   button.ghost { background: transparent; color: var(--text); border:1px solid var(--line); border-radius: 10px; padding: 11px 15px; font-size: 14.5px; font-weight: 600; cursor:pointer; }
-  button.ghost.on { border-color: var(--accent); color: var(--accent); }
   canvas.stage { width: 100%; border-radius: 10px; display:block; background:#fff; }
-  canvas.paper { background: repeating-conic-gradient(#f7f2e7 0% 25%, #f1ead9 0% 50%) 0 0/22px 22px; }
-  label { display:block; font-size: 12.5px; text-transform: uppercase; letter-spacing:.05em; color: var(--muted); margin: 14px 0 6px; }
-  input[type=range] { width: 100%; }
   .stepnum { display:inline-block; background: var(--accent); color:#241a05; font-weight: 800; border-radius: 999px; width: 28px; height: 28px; line-height: 28px; text-align:center; margin-right: 8px; }
   h3 { margin: 2px 0 8px; font-size: 19px; }
   .how { color: var(--muted); line-height: 1.65; font-size: 14.5px; }
@@ -41,11 +37,11 @@
 <body>
 <div class="wrap">
   <h1>PicToDraw<span class="dot">.</span></h1>
-  <p class="tag">Turn any photo into a step-by-step drawing guide. A face, your pet, a favourite place — PicToDraw breaks it into the same stages art teachers use: <b>big shapes → grid → outline → light & shadow → details</b>.</p>
+  <p class="tag">Upload any picture and get a simple drawing tutorial — three steps, black outline on white, just like a tutorial book: <b>basic shapes → outline → final drawing</b>.</p>
   <img class="hero-img" src="banner.png" alt="PicToDraw — turn any photo into a drawing lesson">
 
   <div class="card">
-    <div class="drop" id="drop">Tap to upload a picture, or drag & drop it here<br><small>portraits, pets, objects, places — anything you want to draw</small></div>
+    <div class="drop" id="drop">Tap to upload a picture, or drag & drop it here<br><small>a person, a pet, an object, a place — anything you want to draw</small></div>
     <input type="file" id="file" accept="image/*" class="hidden">
     <input type="file" id="cam" accept="image/*" capture="environment" class="hidden">
     <div class="row">
@@ -53,71 +49,45 @@
       <button class="ghost" id="btnCamera">📷 Take a photo</button>
       <button class="ghost" id="btnSample">Try the sample cat</button>
     </div>
-    <label>Guide style</label>
-    <div class="row" style="margin-top:2px">
-      <button class="ghost on" id="modeBegin">🌱 Beginner — plain words, grid method</button>
-      <button class="ghost" id="modeArtist">🎨 Artist — proportions & values</button>
-    </div>
-    <p class="note" style="margin-top:12px">Everything is processed on your device — your photo never leaves it. Honest note: PicToDraw builds your guide from the picture itself using classic drawing techniques (grid, outline tracing, value studies). It doesn't "see" the picture like a person would — the stages below are the real method, whichever photo you give it.</p>
+    <p class="note" style="margin-top:12px">Everything is processed on your device — your photo never leaves it.</p>
   </div>
 
   <div class="card">
-    <h3><span class="stepnum">1</span>See the big shapes</h3>
-    <canvas class="stage" id="cvShapes" width="720" height="540"></canvas>
-    <p class="how" data-begin="<b>Don't draw details yet.</b> This blurry, blocky version shows the few big shapes your picture is made of. On your paper, lightly sketch just these shapes first — a circle-ish blob here, a triangle there. If the big shapes are right, everything after is easier." data-artist="<b>Block-in.</b> Reduce the subject to its largest masses before anything else. Sketch the envelope and the main planes; check the big proportions against each other (width vs height, mass vs mass) while everything is still erasable."></p>
-    <div class="row"><button class="ghost" data-dl="cvShapes">Download this stage (PNG)</button></div>
+    <h3><span class="stepnum">1</span>Start with basic shapes</h3>
+    <canvas class="stage" id="cvStep1" width="720" height="540"></canvas>
+    <p class="how">Every picture is made of simple shapes — <b>circles, ovals, triangles and rectangles</b>. This step shows your picture boiled down to its biggest shapes. <b>Copy just these shapes lightly</b> on your paper first. Get them in the right places and the rest is easy.</p>
+    <div class="row"><button class="ghost" data-dl="cvStep1">Download step 1 (PNG)</button></div>
   </div>
 
   <div class="card">
-    <h3><span class="stepnum">2</span>Map it with a grid</h3>
-    <canvas class="stage" id="cvGrid" width="720" height="540"></canvas>
-    <label>Grid squares across</label>
-    <input type="range" id="gridN" min="4" max="12" value="6">
-    <p class="how" data-begin="<b>The beginner's secret weapon.</b> Draw the same grid, very lightly, on your paper (same number of squares). Then copy the picture <b>one square at a time</b> — square B2, then B3… Each small square is easy, and the whole picture lands in the right place almost by itself. The letters and numbers match on both grids." data-artist="<b>Grid transfer.</b> Rule the same grid on your support and transfer the drawing square by square, anchoring on intersections: where contours cross grid lines is your most reliable proportion check. Use a finer grid for faces."></p>
-    <div class="row"><button class="ghost" data-dl="cvGrid">Download this stage (PNG)</button></div>
+    <h3><span class="stepnum">2</span>Sketch the outline</h3>
+    <canvas class="stage" id="cvStep2" width="720" height="540"></canvas>
+    <p class="how">Now draw the <b>main outline</b> over your shapes — only the big lines, nothing small yet. Keep your pencil <b>light</b> so mistakes rub out easily. This is a sketch, it's allowed to be messy.</p>
+    <div class="row"><button class="ghost" data-dl="cvStep2">Download step 2 (PNG)</button></div>
   </div>
 
   <div class="card">
-    <h3><span class="stepnum">3</span>Draw the outline</h3>
-    <canvas class="stage paper" id="cvOutline" width="720" height="540"></canvas>
-    <label>Outline detail</label>
-    <input type="range" id="edgeT" min="10" max="120" value="45">
-    <p class="how" data-begin="<b>Now the real drawing.</b> Follow this line map to draw the edges of everything — the outline of the head, the eyes, the folds, the edges of objects. Print it and trace it if you're just starting; or use it as a map while you draw freehand with your grid. Slide 'Outline detail' until the lines look clean, not noisy." data-artist="<b>Contour map.</b> These are the edges the picture actually contains — silhouette, internal contours and plane breaks. Use it to verify your line work, or print and trace for a clean transfer to your final support."></p>
-    <div class="row"><button class="ghost" data-dl="cvOutline">Download this stage (PNG)</button></div>
+    <h3><span class="stepnum">3</span>Finish the drawing</h3>
+    <canvas class="stage" id="cvStep3" width="720" height="540"></canvas>
+    <p class="how">Last step: follow the <b>full outline with all the details</b> — eyes, patterns, textures, the small lines. Darken the lines you want to keep, rub out the light guide lines from steps 1 and 2… and sign your name. <b>You drew that.</b></p>
+    <div class="row"><button class="ghost" data-dl="cvStep3">Download step 3 (PNG)</button></div>
   </div>
 
   <div class="card">
-    <h3><span class="stepnum">4</span>Add light & shadow</h3>
-    <canvas class="stage" id="cvValues" width="720" height="540"></canvas>
-    <label>Number of tones</label>
-    <input type="range" id="tones" min="3" max="5" value="4">
-    <p class="how" data-begin="<b>Shading, simplified.</b> Your picture squeezed into a few grey tones: white, light grey, dark grey, near-black. Shade your drawing in that order — <b>darkest shapes first</b>, then the middle greys, and leave the whites as bare paper. This one step is what makes a flat outline look real and round." data-artist="<b>Value study (notan).</b> The picture posterised into a few value masses. Work dark-to-light or mass-in the whole value pattern before modelling; keep edges between value shapes accurate and the form will read even before detail. Squint at the original — it should collapse to roughly this pattern."></p>
-    <div class="row"><button class="ghost" data-dl="cvValues">Download this stage (PNG)</button></div>
-  </div>
-
-  <div class="card">
-    <h3><span class="stepnum">5</span>Finish with details</h3>
-    <canvas class="stage" id="cvFinal" width="720" height="540"></canvas>
-    <p class="how" data-begin="<b>Last, the small stuff:</b> eye sparkle, fur texture, patterns, lettering. Two tricks the pros use: <b>(1)</b> hold your drawing up to a mirror (or flip this page's picture in your head) — mistakes jump out in the flipped view; <b>(2)</b> compare one small area at a time against the photo instead of judging the whole drawing at once. Sign it. You drew that." data-artist="<b>Refinement.</b> Model form within the value shapes, sharpen focal edges, soften lost edges, then add surface detail last. Check proportions by flipping the image horizontally and by viewing at a distance; correct the drawing, not the reference."></p>
-    <div class="row"><button class="ghost" data-dl="cvFinal">Download this stage (PNG)</button></div>
-  </div>
-
-  <div class="card">
-    <h3><span class="stepnum">📄</span>Tutorial sheet — all steps, black on white</h3>
+    <h3><span class="stepnum">📄</span>Tutorial sheet — all 3 steps on one page</h3>
     <canvas class="stage" id="cvSheet" width="720" height="900"></canvas>
-    <p class="how" data-begin="Every stage redrawn as <b>clean black outlines on plain white</b> — the way real drawing tutorials and colouring books are printed. Download the full sheet, print it, and work through it with pencil and paper: shapes, grid, outline, shadow shapes, final line drawing." data-artist="Every stage redrawn as <b>clean black outlines on plain white</b> — the way real drawing tutorials and colouring books are printed. Download the full sheet, print it, and work through it with pencil and paper: shapes, grid, outline, shadow shapes, final line drawing.">Every stage redrawn as <b>clean black outlines on plain white</b> — the way real drawing tutorials and colouring books are printed. Download the full sheet, print it, and work through it with pencil and paper: shapes, grid, outline, shadow shapes, final line drawing.</p>
+    <p class="how">The whole tutorial on <b>one white page</b>, ready to print and draw along with.</p>
     <div class="row"><button class="act" id="btnSheet">Download the full tutorial sheet (PNG)</button></div>
   </div>
 
-  <p class="note" style="margin-top:18px">PicToDraw is a static page: no uploads, no accounts, no tracking — all processing happens in your browser. Works for pencil, pen, charcoal or painting studies. Built by Bangees.</p>
+  <p class="note" style="margin-top:18px">PicToDraw is a static page: no uploads, no accounts, no tracking — all processing happens in your browser. Built by Bangees.</p>
 </div>
 
 <script>
 const $ = (id) => document.getElementById(id);
 const MAX = 880;
-let src = null;         // HTMLImageElement or canvas (sample)
+let src = null;
 let W = 720, H = 540;
-let mode = "begin";
 const work = document.createElement("canvas");
 const wg = work.getContext("2d", { willReadFrequently: true });
 
@@ -134,7 +104,7 @@ function makeSample() {
   g.fillStyle = "#f7a8b8"; g.beginPath(); g.moveTo(252, 300); g.lineTo(278, 195); g.lineTo(348, 262); g.closePath(); g.fill();
   g.beginPath(); g.moveTo(548, 300); g.lineTo(522, 195); g.lineTo(452, 262); g.closePath(); g.fill();
   g.fillStyle = "#f2f2f2"; g.beginPath(); g.arc(400, 430, 215, 0, 7); g.fill(); // head
-  g.fillStyle = "#a8a8a8"; g.beginPath(); g.arc(400, 470, 215, 0.15 * Math.PI, 0.85 * Math.PI); g.fill(); // chin shade (dark enough to survive value posterising, so the demo shows a shadow shape)
+  g.fillStyle = "#a8a8a8"; g.beginPath(); g.arc(400, 470, 215, 0.15 * Math.PI, 0.85 * Math.PI); g.fill(); // chin shade
   g.fillStyle = "#222"; g.beginPath(); g.arc(322, 405, 26, 0, 7); g.fill(); // eyes
   g.beginPath(); g.arc(478, 405, 26, 0, 7); g.fill();
   g.fillStyle = "#fff"; g.beginPath(); g.arc(330, 397, 9, 0, 7); g.fill(); g.beginPath(); g.arc(486, 397, 9, 0, 7); g.fill();
@@ -158,57 +128,7 @@ function setSource(s) {
   wg.drawImage(s, 0, 0, W, H);
   renderAll();
 }
-function grayData() {
-  const d = wg.getImageData(0, 0, W, H).data, out = new Float32Array(W * H);
-  for (let i = 0; i < W * H; i++) out[i] = 0.299 * d[i * 4] + 0.587 * d[i * 4 + 1] + 0.114 * d[i * 4 + 2];
-  return out;
-}
-function fit(cv) { cv.width = W; cv.height = H; }
-
-function renderShapes() {
-  const cv = $("cvShapes"); fit(cv); const g = cv.getContext("2d");
-  const tiny = document.createElement("canvas"); const cells = 26;
-  tiny.width = cells; tiny.height = Math.max(8, Math.round(cells * H / W));
-  tiny.getContext("2d").drawImage(work, 0, 0, tiny.width, tiny.height);
-  g.imageSmoothingEnabled = false; g.drawImage(tiny, 0, 0, W, H); g.imageSmoothingEnabled = true;
-}
-function renderGrid() {
-  const cv = $("cvGrid"); fit(cv); const g = cv.getContext("2d");
-  g.drawImage(work, 0, 0);
-  const n = +$("gridN").value, cw = W / n, ch = H / Math.round(n * H / W), rows = Math.round(n * H / W);
-  g.strokeStyle = "rgba(240,168,50,.9)"; g.lineWidth = 1.6; g.font = "bold 13px sans-serif"; g.fillStyle = "#f0a832";
-  for (let i = 0; i <= n; i++) { g.beginPath(); g.moveTo(i * cw, 0); g.lineTo(i * cw, H); g.stroke(); if (i < n) g.fillText(String.fromCharCode(65 + i), i * cw + cw / 2 - 4, 16); }
-  for (let j = 0; j <= rows; j++) { g.beginPath(); g.moveTo(0, j * ch); g.lineTo(W, j * ch); g.stroke(); if (j < rows) g.fillText(String(j + 1), 5, j * ch + ch / 2 + 5); }
-}
-function renderOutline() {
-  const cv = $("cvOutline"); fit(cv); const g = cv.getContext("2d");
-  const gray = grayData(), out = g.createImageData(W, H), t = +$("edgeT").value;
-  for (let y = 1; y < H - 1; y++) for (let x = 1; x < W - 1; x++) {
-    const i = y * W + x;
-    const gx = -gray[i - W - 1] - 2 * gray[i - 1] - gray[i + W - 1] + gray[i - W + 1] + 2 * gray[i + 1] + gray[i + W + 1];
-    const gy = -gray[i - W - 1] - 2 * gray[i - W] - gray[i - W + 1] + gray[i + W - 1] + 2 * gray[i + W] + gray[i + W + 1];
-    const m = Math.sqrt(gx * gx + gy * gy), v = m > t ? 30 : 255, o = i * 4;
-    out.data[o] = out.data[o + 1] = out.data[o + 2] = v; out.data[o + 3] = 255;
-  }
-  g.putImageData(out, 0, 0);
-}
-function renderValues() {
-  const cv = $("cvValues"); fit(cv); const g = cv.getContext("2d");
-  const img = wg.getImageData(0, 0, W, H), d = img.data, levels = +$("tones").value;
-  for (let i = 0; i < d.length; i += 4) {
-    const gr = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
-    const q = Math.round((gr / 255) * (levels - 1)) / (levels - 1) * 255;
-    d[i] = d[i + 1] = d[i + 2] = q;
-  }
-  g.putImageData(img, 0, 0);
-}
-function renderFinal() {
-  const cv = $("cvFinal"); fit(cv); const g = cv.getContext("2d");
-  g.drawImage(work, 0, 0);
-  g.globalAlpha = 0.35; g.drawImage($("cvOutline"), 0, 0); g.globalAlpha = 1;
-}
-
-// ---------- tutorial sheet: every stage as black outline on plain white ----------
+// Sobel edge detection: source canvas -> black lines on plain white
 function edgeOf(sourceCanvas, t) {
   const sc = sourceCanvas.getContext("2d", { willReadFrequently: true });
   const d = sc.getImageData(0, 0, W, H).data, gray = new Float32Array(W * H);
@@ -225,41 +145,41 @@ function edgeOf(sourceCanvas, t) {
   g.putImageData(out, 0, 0);
   return cv;
 }
+function shapesCanvas() {
+  // the photo reduced to big blocky shapes (offscreen), the basis for step 1
+  const tiny = document.createElement("canvas"); const cells = 26;
+  tiny.width = cells; tiny.height = Math.max(8, Math.round(cells * H / W));
+  tiny.getContext("2d").drawImage(work, 0, 0, tiny.width, tiny.height);
+  const big = document.createElement("canvas"); big.width = W; big.height = H;
+  const g = big.getContext("2d"); g.imageSmoothingEnabled = false;
+  g.drawImage(tiny, 0, 0, W, H);
+  return big;
+}
+function show(cv, img) { cv.width = W; cv.height = H; cv.getContext("2d").drawImage(img, 0, 0); }
+
+let stepImgs = [];
+function renderAll() {
+  if (!src) return;
+  stepImgs = [edgeOf(shapesCanvas(), 26), edgeOf(work, 78), edgeOf(work, 38)];
+  show($("cvStep1"), stepImgs[0]);
+  show($("cvStep2"), stepImgs[1]);
+  show($("cvStep3"), stepImgs[2]);
+  buildSheet();
+}
 function buildSheet() {
-  const titles = ["STEP 1 — BIG SHAPES", "STEP 2 — GRID MAP", "STEP 3 — OUTLINE", "STEP 4 — SHADOW SHAPES", "STEP 5 — FINAL LINE DRAWING"];
-  // shadow-shapes panel: value-region boundaries in full black over a faint main outline,
-  // so the silhouette survives where a tone happens to match the background
-  const sp = document.createElement("canvas"); sp.width = W; sp.height = H;
-  const sg = sp.getContext("2d"); sg.fillStyle = "#fff"; sg.fillRect(0, 0, W, H);
-  sg.globalAlpha = 0.35; sg.drawImage($("cvOutline"), 0, 0); sg.globalAlpha = 1;
-  sg.globalCompositeOperation = "multiply"; // white stays white, black lines darken — keeps the underlay visible
-  sg.drawImage(edgeOf($("cvValues"), 26), 0, 0);
-  sg.globalCompositeOperation = "source-over";
-  const panels = [edgeOf($("cvShapes"), 26), null, $("cvOutline"), sp, $("cvOutline")];
-  // grid panel: outline + black grid + labels on white
-  const gp = document.createElement("canvas"); gp.width = W; gp.height = H;
-  const gg = gp.getContext("2d"); gg.fillStyle = "#fff"; gg.fillRect(0, 0, W, H); gg.drawImage($("cvOutline"), 0, 0);
-  const n = +$("gridN").value, rows = Math.round(n * H / W), cw = W / n, ch = H / rows;
-  gg.strokeStyle = "rgba(0,0,0,.5)"; gg.lineWidth = 1.4; gg.font = "bold 13px sans-serif"; gg.fillStyle = "#000";
-  for (let i = 0; i <= n; i++) { gg.beginPath(); gg.moveTo(i * cw, 0); gg.lineTo(i * cw, H); gg.stroke(); if (i < n) gg.fillText(String.fromCharCode(65 + i), i * cw + cw / 2 - 4, 16); }
-  for (let j = 0; j <= rows; j++) { gg.beginPath(); gg.moveTo(0, j * ch); gg.lineTo(W, j * ch); gg.stroke(); if (j < rows) gg.fillText(String(j + 1), 5, j * ch + ch / 2 + 5); }
-  panels[1] = gp;
+  const titles = ["STEP 1 — BASIC SHAPES", "STEP 2 — SKETCH THE OUTLINE", "STEP 3 — FINAL DRAWING"];
   const bar = 46, sheet = $("cvSheet");
-  sheet.width = W; sheet.height = panels.length * (H + bar) + 16;
+  sheet.width = W; sheet.height = stepImgs.length * (H + bar) + 16;
   const g = sheet.getContext("2d");
   g.fillStyle = "#fff"; g.fillRect(0, 0, sheet.width, sheet.height);
   g.fillStyle = "#111"; g.font = "bold 24px sans-serif"; g.textBaseline = "middle";
-  panels.forEach((p, i) => {
+  stepImgs.forEach((p, i) => {
     const y = 8 + i * (H + bar);
     g.fillText(titles[i], 6, y + bar / 2);
     g.drawImage(p, 0, y + bar);
     g.strokeStyle = "#111"; g.lineWidth = 2; g.strokeRect(1, y + bar + 1, W - 2, H - 2);
   });
 }
-function renderAll() { if (!src) return; renderShapes(); renderGrid(); renderOutline(); renderValues(); renderFinal(); buildSheet(); }
-
-["gridN", "edgeT", "tones"].forEach(id => $(id).addEventListener("input", renderAll));
-$("btnSheet").onclick = () => { const a = document.createElement("a"); a.download = "pictodraw-tutorial-sheet.png"; a.href = $("cvSheet").toDataURL("image/png"); a.click(); };
 
 // ---------- inputs ----------
 function loadFile(f) { if (!f) return; const img = new Image(); img.onload = () => setSource(img); img.src = URL.createObjectURL(f); }
@@ -272,23 +192,13 @@ $("drop").ondragover = (e) => e.preventDefault();
 $("drop").ondrop = (e) => { e.preventDefault(); loadFile(e.dataTransfer.files[0]); };
 $("btnSample").onclick = () => setSource(makeSample());
 
-// ---------- mode ----------
-function setMode(m) {
-  mode = m;
-  $("modeBegin").classList.toggle("on", m === "begin");
-  $("modeArtist").classList.toggle("on", m === "artist");
-  document.querySelectorAll(".how").forEach(p => { p.innerHTML = p.dataset[m === "begin" ? "begin" : "artist"]; });
-}
-$("modeBegin").onclick = () => setMode("begin");
-$("modeArtist").onclick = () => setMode("artist");
-setMode("begin");
-
 // ---------- downloads ----------
 document.querySelectorAll("[data-dl]").forEach(b => b.onclick = () => {
   const a = document.createElement("a");
   a.download = b.dataset.dl.replace("cv", "pictodraw-").toLowerCase() + ".png";
   a.href = $(b.dataset.dl).toDataURL("image/png"); a.click();
 });
+$("btnSheet").onclick = () => { const a = document.createElement("a"); a.download = "pictodraw-tutorial-sheet.png"; a.href = $("cvSheet").toDataURL("image/png"); a.click(); };
 
 setSource(makeSample());
 </script>
