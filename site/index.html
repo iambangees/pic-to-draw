@@ -102,6 +102,13 @@
     <div class="row"><button class="ghost" data-dl="cvFinal">Download this stage (PNG)</button></div>
   </div>
 
+  <div class="card">
+    <h3><span class="stepnum">📄</span>Tutorial sheet — all steps, black on white</h3>
+    <canvas class="stage" id="cvSheet" width="720" height="900"></canvas>
+    <p class="how">Every stage redrawn as <b>clean black outlines on plain white</b> — the way real drawing tutorials and colouring books are printed. Download the full sheet, print it, and work through it with pencil and paper: shapes, grid, outline, shadow shapes, final line drawing.</p>
+    <div class="row"><button class="act" id="btnSheet">Download the full tutorial sheet (PNG)</button></div>
+  </div>
+
   <p class="note" style="margin-top:18px">PicToDraw is a static page: no uploads, no accounts, no tracking — all processing happens in your browser. Works for pencil, pen, charcoal or painting studies. Built by Bangees.</p>
 </div>
 
@@ -200,9 +207,51 @@ function renderFinal() {
   g.drawImage(work, 0, 0);
   g.globalAlpha = 0.35; g.drawImage($("cvOutline"), 0, 0); g.globalAlpha = 1;
 }
-function renderAll() { if (!src) return; renderShapes(); renderGrid(); renderOutline(); renderValues(); renderFinal(); }
 
-["gridN", "edgeT", "tones"].forEach(id => $(id).addEventListener("input", () => { renderGrid(); renderOutline(); renderValues(); renderFinal(); }));
+// ---------- tutorial sheet: every stage as black outline on plain white ----------
+function edgeOf(sourceCanvas, t) {
+  const sc = sourceCanvas.getContext("2d", { willReadFrequently: true });
+  const d = sc.getImageData(0, 0, W, H).data, gray = new Float32Array(W * H);
+  for (let i = 0; i < W * H; i++) gray[i] = 0.299 * d[i * 4] + 0.587 * d[i * 4 + 1] + 0.114 * d[i * 4 + 2];
+  const cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+  const g = cv.getContext("2d"), out = g.createImageData(W, H);
+  for (let i = 0; i < W * H; i++) { const o = i * 4; out.data[o] = out.data[o + 1] = out.data[o + 2] = 255; out.data[o + 3] = 255; }
+  for (let y = 1; y < H - 1; y++) for (let x = 1; x < W - 1; x++) {
+    const i = y * W + x;
+    const gx = -gray[i - W - 1] - 2 * gray[i - 1] - gray[i + W - 1] + gray[i - W + 1] + 2 * gray[i + 1] + gray[i + W + 1];
+    const gy = -gray[i - W - 1] - 2 * gray[i - W] - gray[i - W + 1] + gray[i + W - 1] + 2 * gray[i + W] + gray[i + W + 1];
+    if (Math.sqrt(gx * gx + gy * gy) > t) { const o = i * 4; out.data[o] = out.data[o + 1] = out.data[o + 2] = 20; }
+  }
+  g.putImageData(out, 0, 0);
+  return cv;
+}
+function buildSheet() {
+  const titles = ["STEP 1 — BIG SHAPES", "STEP 2 — GRID MAP", "STEP 3 — OUTLINE", "STEP 4 — SHADOW SHAPES", "STEP 5 — FINAL LINE DRAWING"];
+  const panels = [edgeOf($("cvShapes"), 26), null, $("cvOutline"), edgeOf($("cvValues"), 26), $("cvOutline")];
+  // grid panel: outline + black grid + labels on white
+  const gp = document.createElement("canvas"); gp.width = W; gp.height = H;
+  const gg = gp.getContext("2d"); gg.fillStyle = "#fff"; gg.fillRect(0, 0, W, H); gg.drawImage($("cvOutline"), 0, 0);
+  const n = +$("gridN").value, rows = Math.round(n * H / W), cw = W / n, ch = H / rows;
+  gg.strokeStyle = "rgba(0,0,0,.5)"; gg.lineWidth = 1.4; gg.font = "bold 13px sans-serif"; gg.fillStyle = "#000";
+  for (let i = 0; i <= n; i++) { gg.beginPath(); gg.moveTo(i * cw, 0); gg.lineTo(i * cw, H); gg.stroke(); if (i < n) gg.fillText(String.fromCharCode(65 + i), i * cw + 5, 16); }
+  for (let j = 0; j <= rows; j++) { gg.beginPath(); gg.moveTo(0, j * ch); gg.lineTo(W, j * ch); gg.stroke(); if (j < rows) gg.fillText(String(j + 1), 5, j * ch + 16); }
+  panels[1] = gp;
+  const bar = 46, sheet = $("cvSheet");
+  sheet.width = W; sheet.height = panels.length * (H + bar) + 16;
+  const g = sheet.getContext("2d");
+  g.fillStyle = "#fff"; g.fillRect(0, 0, sheet.width, sheet.height);
+  g.fillStyle = "#111"; g.font = "bold 24px sans-serif"; g.textBaseline = "middle";
+  panels.forEach((p, i) => {
+    const y = 8 + i * (H + bar);
+    g.fillText(titles[i], 6, y + bar / 2);
+    g.drawImage(p, 0, y + bar);
+    g.strokeStyle = "#111"; g.lineWidth = 2; g.strokeRect(1, y + bar + 1, W - 2, H - 2);
+  });
+}
+function renderAll() { if (!src) return; renderShapes(); renderGrid(); renderOutline(); renderValues(); renderFinal(); buildSheet(); }
+
+["gridN", "edgeT", "tones"].forEach(id => $(id).addEventListener("input", renderAll));
+$("btnSheet").onclick = () => { const a = document.createElement("a"); a.download = "pictodraw-tutorial-sheet.png"; a.href = $("cvSheet").toDataURL("image/png"); a.click(); };
 
 // ---------- inputs ----------
 function loadFile(f) { if (!f) return; const img = new Image(); img.onload = () => setSource(img); img.src = URL.createObjectURL(f); }
