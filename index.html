@@ -232,7 +232,9 @@ function buildSheet() {
   const sp = document.createElement("canvas"); sp.width = W; sp.height = H;
   const sg = sp.getContext("2d"); sg.fillStyle = "#fff"; sg.fillRect(0, 0, W, H);
   sg.globalAlpha = 0.35; sg.drawImage($("cvOutline"), 0, 0); sg.globalAlpha = 1;
+  sg.globalCompositeOperation = "multiply"; // white stays white, black lines darken — keeps the underlay visible
   sg.drawImage(edgeOf($("cvValues"), 26), 0, 0);
+  sg.globalCompositeOperation = "source-over";
   const panels = [edgeOf($("cvShapes"), 26), null, $("cvOutline"), sp, $("cvOutline")];
   // grid panel: outline + black grid + labels on white
   const gp = document.createElement("canvas"); gp.width = W; gp.height = H;
