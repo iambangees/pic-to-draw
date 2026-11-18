@@ -105,7 +105,7 @@
   <div class="card">
     <h3><span class="stepnum">📄</span>Tutorial sheet — all steps, black on white</h3>
     <canvas class="stage" id="cvSheet" width="720" height="900"></canvas>
-    <p class="how">Every stage redrawn as <b>clean black outlines on plain white</b> — the way real drawing tutorials and colouring books are printed. Download the full sheet, print it, and work through it with pencil and paper: shapes, grid, outline, shadow shapes, final line drawing.</p>
+    <p class="how" data-begin="Every stage redrawn as <b>clean black outlines on plain white</b> — the way real drawing tutorials and colouring books are printed. Download the full sheet, print it, and work through it with pencil and paper: shapes, grid, outline, shadow shapes, final line drawing." data-artist="Every stage redrawn as <b>clean black outlines on plain white</b> — the way real drawing tutorials and colouring books are printed. Download the full sheet, print it, and work through it with pencil and paper: shapes, grid, outline, shadow shapes, final line drawing.">Every stage redrawn as <b>clean black outlines on plain white</b> — the way real drawing tutorials and colouring books are printed. Download the full sheet, print it, and work through it with pencil and paper: shapes, grid, outline, shadow shapes, final line drawing.</p>
     <div class="row"><button class="act" id="btnSheet">Download the full tutorial sheet (PNG)</button></div>
   </div>
 
@@ -177,8 +177,8 @@ function renderGrid() {
   g.drawImage(work, 0, 0);
   const n = +$("gridN").value, cw = W / n, ch = H / Math.round(n * H / W), rows = Math.round(n * H / W);
   g.strokeStyle = "rgba(240,168,50,.9)"; g.lineWidth = 1.6; g.font = "bold 13px sans-serif"; g.fillStyle = "#f0a832";
-  for (let i = 0; i <= n; i++) { g.beginPath(); g.moveTo(i * cw, 0); g.lineTo(i * cw, H); g.stroke(); if (i < n) g.fillText(String.fromCharCode(65 + i), i * cw + 5, 16); }
-  for (let j = 0; j <= rows; j++) { g.beginPath(); g.moveTo(0, j * ch); g.lineTo(W, j * ch); g.stroke(); if (j < rows) g.fillText(String(j + 1), 5, j * ch + 16); }
+  for (let i = 0; i <= n; i++) { g.beginPath(); g.moveTo(i * cw, 0); g.lineTo(i * cw, H); g.stroke(); if (i < n) g.fillText(String.fromCharCode(65 + i), i * cw + cw / 2 - 4, 16); }
+  for (let j = 0; j <= rows; j++) { g.beginPath(); g.moveTo(0, j * ch); g.lineTo(W, j * ch); g.stroke(); if (j < rows) g.fillText(String(j + 1), 5, j * ch + ch / 2 + 5); }
 }
 function renderOutline() {
   const cv = $("cvOutline"); fit(cv); const g = cv.getContext("2d");
@@ -227,14 +227,20 @@ function edgeOf(sourceCanvas, t) {
 }
 function buildSheet() {
   const titles = ["STEP 1 — BIG SHAPES", "STEP 2 — GRID MAP", "STEP 3 — OUTLINE", "STEP 4 — SHADOW SHAPES", "STEP 5 — FINAL LINE DRAWING"];
-  const panels = [edgeOf($("cvShapes"), 26), null, $("cvOutline"), edgeOf($("cvValues"), 26), $("cvOutline")];
+  // shadow-shapes panel: value-region boundaries in full black over a faint main outline,
+  // so the silhouette survives where a tone happens to match the background
+  const sp = document.createElement("canvas"); sp.width = W; sp.height = H;
+  const sg = sp.getContext("2d"); sg.fillStyle = "#fff"; sg.fillRect(0, 0, W, H);
+  sg.globalAlpha = 0.35; sg.drawImage($("cvOutline"), 0, 0); sg.globalAlpha = 1;
+  sg.drawImage(edgeOf($("cvValues"), 26), 0, 0);
+  const panels = [edgeOf($("cvShapes"), 26), null, $("cvOutline"), sp, $("cvOutline")];
   // grid panel: outline + black grid + labels on white
   const gp = document.createElement("canvas"); gp.width = W; gp.height = H;
   const gg = gp.getContext("2d"); gg.fillStyle = "#fff"; gg.fillRect(0, 0, W, H); gg.drawImage($("cvOutline"), 0, 0);
   const n = +$("gridN").value, rows = Math.round(n * H / W), cw = W / n, ch = H / rows;
   gg.strokeStyle = "rgba(0,0,0,.5)"; gg.lineWidth = 1.4; gg.font = "bold 13px sans-serif"; gg.fillStyle = "#000";
-  for (let i = 0; i <= n; i++) { gg.beginPath(); gg.moveTo(i * cw, 0); gg.lineTo(i * cw, H); gg.stroke(); if (i < n) gg.fillText(String.fromCharCode(65 + i), i * cw + 5, 16); }
-  for (let j = 0; j <= rows; j++) { gg.beginPath(); gg.moveTo(0, j * ch); gg.lineTo(W, j * ch); gg.stroke(); if (j < rows) gg.fillText(String(j + 1), 5, j * ch + 16); }
+  for (let i = 0; i <= n; i++) { gg.beginPath(); gg.moveTo(i * cw, 0); gg.lineTo(i * cw, H); gg.stroke(); if (i < n) gg.fillText(String.fromCharCode(65 + i), i * cw + cw / 2 - 4, 16); }
+  for (let j = 0; j <= rows; j++) { gg.beginPath(); gg.moveTo(0, j * ch); gg.lineTo(W, j * ch); gg.stroke(); if (j < rows) gg.fillText(String(j + 1), 5, j * ch + ch / 2 + 5); }
   panels[1] = gp;
   const bar = 46, sheet = $("cvSheet");
   sheet.width = W; sheet.height = panels.length * (H + bar) + 16;

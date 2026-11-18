@@ -19,6 +19,10 @@ Upload or photograph anything — a person, a pet, an object, a place — and Pi
 
 Every stage is downloadable as a PNG for printing. A programmatically drawn sample cat is loaded by default so the page works the moment it opens.
 
+## Tutorial sheet
+
+A dedicated section redraws **all five stages as black outlines on plain white** — shapes as outlines, the grid map in black on white, the outline, the shadow-region boundaries, and the final line drawing — stacked into one tall, titled, printable sheet with a single download button, like a page from a drawing-tutorial book.
+
 ## Honest note (also stated on the page)
 
 PicToDraw builds the guide from the picture using classic drawing *techniques* — grid transfer, edge detection, value posterisation. It does not "understand" the photo like a human teacher; the method is the same whichever photo you give it, which is exactly why it works for any subject.
